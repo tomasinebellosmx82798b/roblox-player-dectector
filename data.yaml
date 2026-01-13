@@ -1,11 +1,5 @@
-# Đường dẫn gốc tới thư mục chứa dự án của bạn
-path: 'C:/Users/Hoang/Desktop/roblox esp ai legit'
-
-# Đường dẫn tới thư mục ảnh và nhãn
-# Đảm bảo thư mục nhãn đã được đổi tên thành 'labels' (có chữ s)
-train: 'images/roblox_data'
-val: 'images/roblox_data'
-
-# Định nghĩa các lớp (Chỉ còn 1 lớp duy nhất)
 names:
   0: roblox player
+path: C:\Users\Hoang\Desktop\roblox esp ai legit
+train: images\train
+val: images\train
