@@ -85,7 +85,7 @@ def main():
     try:
         model.train(
             data='data.yaml',
-            epochs=5,             # Thay đổi số lượng epochs tùy nhu cầu
+            epochs=300,             # Thay đổi số lượng epochs tùy nhu cầu
             imgsz=640,
             batch=16,
             device=device,
