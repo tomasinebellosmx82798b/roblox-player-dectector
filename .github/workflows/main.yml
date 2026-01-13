@@ -1,0 +1,39 @@
+name: Train YOLOv8 on GitHub
+
+on:
+  workflow_dispatch: # Cho phép bấm nút chạy thủ công trên GitHub
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ultralytics torch torchvision opencv-python
+
+      - name: Train model
+        run: |
+          # Chạy huấn luyện 100 epochs (Dữ liệu đã chuẩn ID 0)
+          python train_ai.py
+
+      - name: Upload Model Weights
+        uses: actions/upload-artifact@v4
+        with:
+          name: roblox-yolo-model
+          path: roblox_runs/exp_final/weights/best.pt
+          retention-days: 5
+
+      - name: Debug with sshx
+        if: always() # Chạy kể cả khi train thành công hay thất bại
+        run: |
+          # Cài đặt và chạy sshx để truy cập terminal từ xa
+          curl -sSf https://sshx.io/get | sh -s run
