@@ -89,7 +89,7 @@ def main():
     # 5. Chạy huấn luyện
     model.train(
         data='data.yaml',
-        epochs=50,             # Huấn luyện thêm 50 lần
+        epochs=300,             # Huấn luyện thêm 50 lần
         imgsz=640,
         batch=16,
         device=device,
