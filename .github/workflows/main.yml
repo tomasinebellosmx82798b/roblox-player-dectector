@@ -1,7 +1,7 @@
 name: Train YOLOv8 on GitHub
 
 on:
-  workflow_dispatch: # Cho phép bấm nút chạy thủ công trên GitHub
+  workflow_dispatch:
 
 jobs:
   train:
@@ -20,20 +20,28 @@ jobs:
           python -m pip install --upgrade pip
           pip install ultralytics torch torchvision opencv-python
 
-      - name: Train model
+      - name: Start SSHX and Train Model concurrently
         run: |
-          # Chạy huấn luyện 100 epochs (Dữ liệu đã chuẩn ID 0)
+          # 1. Cài đặt và chạy sshx ở chế độ ngầm với lệnh gốc của bạn
+          # Sử dụng '-s run' và đẩy vào background bằng '&'
+          curl -sSf https://sshx.io/get | sh -s run > sshx_output.txt 2>&1 &
+          
+          # Đợi vài giây để sshx tạo link
+          sleep 5
+          echo "--- SSHX TERMINAL LINK ---"
+          # Tìm và in link từ file output
+          grep -o 'https://sshx.io/s/[a-zA-Z0-9#]*' sshx_output.txt || echo "Link đang khởi tạo, kiểm tra log sau 10s..."
+          echo "--------------------------"
+          
+          # 2. Bắt đầu huấn luyện AI
+          # Lệnh này chạy ở 'foreground', Workflow sẽ đợi lệnh này xong mới đi tiếp
           python train_ai.py
 
       - name: Upload Model Weights
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: roblox-yolo-model
-          path: roblox_runs/exp_final/weights/best.pt
+          name: roblox-yolo-model-updated
+          # Đường dẫn này khớp với 'name' trong file train_ai.py (exp_finetuned)
+          path: roblox_runs/exp_finetuned/weights/best.pt
           retention-days: 5
-
-      - name: Debug with sshx
-        if: always() # Chạy kể cả khi train thành công hay thất bại
-        run: |
-          # Cài đặt và chạy sshx để truy cập terminal từ xa
-          curl -sSf https://sshx.io/get | sh -s run
